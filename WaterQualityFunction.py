@@ -29,7 +29,7 @@ def loc_subset(df, location, location_type="label"):
 	if location_type == "notation":
     
 		locations_notations = set(df['sample.samplingPoint.notation'])
-		location_condition = [x for x in locations_notations if location in x.lower()]
+		location_condition = [x for x in locations_notations if location.lower() in x.lower()]
 		df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)]	
 	
 	return df_subset
