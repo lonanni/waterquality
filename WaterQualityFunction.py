@@ -24,13 +24,13 @@ def loc_subset(df, location, location_type="label"):
     
 		locations = set(df['sample.samplingPoint.label'])
 		location_condition = [x for x in locations if location.lower() in x.lower()]
-		df_subset = df.loc[df['sample.samplingPoint.label'].isin(location_condition)]
+		df_subset = df.loc[df['sample.samplingPoint.label'].isin(location_condition)].copy()
 
 	if location_type == "notation":
     
 		locations_notations = set(df['sample.samplingPoint.notation'])
 		location_condition = [x for x in locations_notations if location.lower() in x.lower()]
-		df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)]	
+		df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)].copy()	
 	
 	return df_subset
 		
@@ -54,36 +54,36 @@ def plot_location_nutrientVStime(df, location, nutrient_determinand, ax=None, se
 	
 	if seasons is False:
 		df_env = loc_subset(df, location, location_type)
-		df_env.loc[:,"date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date	
+		df_env.loc[:,"Date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
 
 		if ax is None:
 			ax = plt.gca()
 		
-		ax.plot(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],color='teal', zorder=1,linewidth=2)
-		ax.scatter(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],edgecolor="black", facecolor="white", linewidth=2, zorder=2, s=20)
+		ax.plot(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],color='teal', zorder=1,linewidth=2)
+		ax.scatter(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],edgecolor="black", facecolor="white", linewidth=2, zorder=2, s=20)
 		ax.set_xlabel("time")
-		ax.set_ylabel(str(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date",ascending=True)["determinand.definition"].iloc[0]))
+		ax.set_ylabel(str(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date",ascending=True)["determinand.definition"].iloc[0]))
 
 	if seasons is True:
 		df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
-		df_env_summer.loc[:,"date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
+		df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
 
 		df_env_winter = loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
-		df_env_winter.loc[:,"date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
+		df_env_winter.loc[:,"Date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
 
 		if ax is None:
 			ax = plt.gca()  
-		ax.plot(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=1, linewidth = 2, color='#EE6A50', linestyle=':')
+		ax.plot(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1, linewidth = 2, color='#EE6A50', linestyle=':')
 		
-		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=2, label="summer", color='orange', marker="+", s=30)
+		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, label="summer", color='orange', marker="+", s=30)
 
-		ax.plot(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=1, linewidth = 2, color='teal', linestyle='--')
+		ax.plot(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1, linewidth = 2, color='teal', linestyle='--')
 		
-		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=2, label="winter", color='blue', marker='o', s=20)
+		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, label="winter", color='blue', marker='o', s=20)
 		
 		ax.legend(fontsize=18)
 		ax.set_xlabel("time")
-		ax.set_ylabel(str(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date",ascending=True)["determinand.definition"].iloc[0]))
+		ax.set_ylabel(str(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date",ascending=True)["determinand.definition"].iloc[0]))
 	return(ax)
 
 def plot_location_nutrientVStime_customizable(df, location, nutrient_determinand, ax=None,seasons=False, location_type="label", plt_kwargs={}, sct_kwargs={},plt_kwargs_s={}, sct_kwargs_s={}, plt_kwargs_w={}, sct_kwargs_w={}, ylabel=None):
@@ -113,12 +113,12 @@ def plot_location_nutrientVStime_customizable(df, location, nutrient_determinand
 	
 	if seasons is False:
 		df_env = loc_subset(df, location, location_type)
-		df_env.loc[:,"date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
+		df_env.loc[:,"Date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
 
 		if ax is None:
 			ax = plt.gca()
-		ax.plot(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'], zorder=1, **plt_kwargs)
-		ax.scatter(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'], **sct_kwargs, zorder=2)
+		ax.plot(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'], zorder=1, **plt_kwargs)
+		ax.scatter(df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env[df_env['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'], **sct_kwargs, zorder=2)
 		ax.set_xlabel("time")
 		
 		if ylabel != None:
@@ -126,34 +126,115 @@ def plot_location_nutrientVStime_customizable(df, location, nutrient_determinand
 
 	if seasons is True:
 		df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
-		df_env_summer.loc[:,"date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
+		df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
 
 		df_env_winter =loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
-		df_env_winter.loc[:,"date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
+		df_env_winter.loc[:,"Date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
 
 		if ax is None:
 			ax = plt.gca()  
-		ax.plot(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=1,**plt_kwargs_s)
-		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=2, label="summer", **sct_kwargs_s)
-		ax.plot(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=1, **plt_kwargs_w)
-		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="date", ascending=True)['result'],zorder=2, label="winter",**sct_kwargs_w)
+		ax.plot(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1,**plt_kwargs_s)
+		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, label="summer", **sct_kwargs_s)
+		ax.plot(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1, **plt_kwargs_w)
+		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, label="winter",**sct_kwargs_w)
 		ax.legend(fontsize=18)
 		ax.set_xlabel("time")
 		if ylabel != None:
 			ax.set_ylabel(str(ylabel))
 	return(ax)
+	
+def plot_location_nutrientVStime_customizable_summer(df, location, nutrient_determinand, ax=None, location_type="label", plt_kwargs_s={}, sct_kwargs_s={}, ylabel=None, label_str=None):
+	"""
+	Return a plot nutrient VS time for a given location, diveded or not into winter (oct-march) and summer (apr-sept).
+	The plot is customizable.
+	
+	input:
+	df (DataFrame object)
+	location (str): the location of interest, e.g. "langstone"; empty string "" return entire catalogue
+	nutrient_determinand (int): the determinant of the nutrient, e.g. 118 for Nitrite (N), mg/l
+	ax(Axes object)
+	seasons (bool): False (no distinction in seasons); True (divided into seasons)
+	location_type (str): either "label" (e.g. "langstone", "portsmouth") or "notation" (e.g. "SO-G00", "SW-Z94")
+	plt_kwargs (properties, optional): to specify properties of the plot
+	sct_kwargs (properties, optional): to specify properties of the scatter plot
+	plt_kwargs_s (properties, optional): to specify properties of the plot, for summer data
+	sct_kwargs_s (properties, optional): to specify properties of the scatter plot, for summer data
+	plt_kwargs_w (properties, optional): to specify properties of the plot, for winter data
+	sct_kwargs_w (properties, optional): to specify properties of the scatter plot, for winter data
+	ylabel (str): label for the y-axis
+	
+	output:
+	ax (Axes object)
+	"""
+
+	df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
+	df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
+
+
+	if ax is None:
+		ax = plt.gca()  
+	ax.plot(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1,**plt_kwargs_s)
+	ax.scatter(df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, **sct_kwargs_s,  label=label_str)
+
+	ax.set_xlabel("time")
+	if ylabel != None:
+		ax.set_ylabel(str(ylabel))
+	if label_str != None:
+		ax.legend(fontsize=18)
+	return(ax)
+	
+def plot_location_nutrientVStime_customizable_winter(df, location, nutrient_determinand, ax=None, location_type="label", plt_kwargs_w={}, sct_kwargs_w={}, ylabel=None, label_str=None):
+	"""
+	Return a plot nutrient VS time for a given location, diveded or not into winter (oct-march) and summer (apr-sept).
+	The plot is customizable.
+	
+	input:
+	df (DataFrame object)
+	location (str): the location of interest, e.g. "langstone"; empty string "" return entire catalogue
+	nutrient_determinand (int): the determinant of the nutrient, e.g. 118 for Nitrite (N), mg/l
+	ax(Axes object)
+	seasons (bool): False (no distinction in seasons); True (divided into seasons)
+	location_type (str): either "label" (e.g. "langstone", "portsmouth") or "notation" (e.g. "SO-G00", "SW-Z94")
+	plt_kwargs (properties, optional): to specify properties of the plot
+	sct_kwargs (properties, optional): to specify properties of the scatter plot
+	plt_kwargs_s (properties, optional): to specify properties of the plot, for summer data
+	sct_kwargs_s (properties, optional): to specify properties of the scatter plot, for summer data
+	plt_kwargs_w (properties, optional): to specify properties of the plot, for winter data
+	sct_kwargs_w (properties, optional): to specify properties of the scatter plot, for winter data
+	ylabel (str): label for the y-axis
+	
+	output:
+	ax (Axes object)
+	"""
+
+	df_env_winter =loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
+	df_env_winter.loc[:,"Date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
+
+	if ax is None:
+		ax = plt.gca()  
+	ax.plot(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=1, **plt_kwargs_w)
+	ax.scatter(df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date'],df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result'],zorder=2, **sct_kwargs_w, label=label_str)
+
+	ax.set_xlabel("time")
+	if ylabel != None:
+		ax.set_ylabel(str(ylabel))
+	if label_str != None:
+		ax.legend(fontsize=18)
+	return(ax)
+	
+
 
 
 
 def DAIN(df, location, ax=None, seasons=False, location_type="label", plt_kwargs={}, sct_kwargs={},plt_kwargs_s={}, sct_kwargs_s={}, plt_kwargs_w={}, sct_kwargs_w={}, ylabel=None, plot_title=None):
 	if seasons is False:
 		df_env = loc_subset(df,  location, location_type)
-		df_env.loc[:,"date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
-		dain = df_env[df_env['determinand.notation'] == 111].sort_values(by="date", ascending=True)['result'].values+df_env[df_env['determinand.notation'] == 116].sort_values(by="date", ascending=True)['result'].values
+		df_env.loc[:,"Date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
+		dain = df_env[df_env['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['result'].values+df_env[df_env['determinand.notation'] == 116].sort_values(by="Date", ascending=True)['result'].values
 		if ax is None:
 			ax = plt.gca()
     
-		ax.scatter(df_env[df_env['determinand.notation'] == 111].sort_values(by="date", ascending=True)['date'], dain, zorder=2, **sct_kwargs)
+		ax.scatter(df_env[df_env['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain, zorder=2, **sct_kwargs)
 
 		ax.set_title(label=str(plot_title),fontsize=18)
 		ax.set_xlabel("time")
@@ -163,24 +244,70 @@ def DAIN(df, location, ax=None, seasons=False, location_type="label", plt_kwargs
 		
 	if seasons is True:
 		df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
-		df_env_summer.loc[:,"date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
+		df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
 
 		df_env_winter =loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
-		df_env_winter.loc[:,"date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
+		df_env_winter.loc[:,"Date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
 		
-		dain_summer = df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="date", ascending=True)['result'].values+df_env_summer[df_env_summer['determinand.notation'] == 116].sort_values(by="date", ascending=True)['result'].values
-		dain_winter = df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="date", ascending=True)['result'].values+df_env_winter[df_env_winter['determinand.notation'] == 116].sort_values(by="date", ascending=True)['result'].values
+		dain_summer = df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['result'].values+df_env_summer[df_env_summer['determinand.notation'] == 116].sort_values(by="Date", ascending=True)['result'].values
+		dain_winter = df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['result'].values+df_env_winter[df_env_winter['determinand.notation'] == 116].sort_values(by="Date", ascending=True)['result'].values
 		if ax is None:
 			ax = plt.gca()		
-		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="date", ascending=True)['date'], dain_summer, zorder=2, **sct_kwargs_s, label="summer")
-		ax.plot(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="date", ascending=True)['date'], dain_summer, zorder=1, **plt_kwargs_s)
-		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="date", ascending=True)['date'], dain_winter, zorder=2, **sct_kwargs_w, label="winter")
-		ax.plot(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="date", ascending=True)['date'], dain_winter, zorder=1, **plt_kwargs_w)
+		ax.scatter(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_summer, zorder=2, **sct_kwargs_s, label="summer")
+		ax.plot(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_summer, zorder=1, **plt_kwargs_s)
+		ax.scatter(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_winter, zorder=2, **sct_kwargs_w, label="winter")
+		ax.plot(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_winter, zorder=1, **plt_kwargs_w)
 		ax.legend(fontsize=18)
 		ax.set_title(label=str(plot_title), fontsize=18)
 		ax.set_xlabel("time")
 		if ylabel != None:
 			ax.set_ylabel(str(ylabel))
+			
+	return(ax)
+	
+	
+	
+def DAIN_summer(df, location, ax=None, location_type="label", plt_kwargs={}, sct_kwargs={},plt_kwargs_s={}, sct_kwargs_s={}, ylabel=None, plot_title=None, label_str=None):
+
+	df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
+	df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
+	
+	dain_summer = df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['result'].values+df_env_summer[df_env_summer['determinand.notation'] == 116].sort_values(by="Date", ascending=True)['result'].values
+
+	if ax is None:
+		ax = plt.gca()		
+	ax.scatter(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_summer, zorder=2, **sct_kwargs_s, label=label_str)
+	ax.plot(df_env_summer[df_env_summer['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_summer, zorder=1, **plt_kwargs_s)
+
+
+	ax.set_title(label=str(plot_title), fontsize=18)
+	ax.set_xlabel("time")
+	if ylabel != None:
+		ax.set_ylabel(str(ylabel))
+	if label_str != None:
+		ax.legend(fontsize=18)
+			
+	return(ax)
+	
+def DAIN_winter(df, location, ax=None, location_type="label", plt_kwargs={}, sct_kwargs={}, plt_kwargs_w={}, sct_kwargs_w={}, ylabel=None, plot_title=None, label_str=None):
+
+	df_env_winter =loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
+	df_env_winter.loc[:,"Date"] =pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
+		
+
+	dain_winter = df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['result'].values+df_env_winter[df_env_winter['determinand.notation'] == 116].sort_values(by="Date", ascending=True)['result'].values
+	if ax is None:
+		ax = plt.gca()		
+
+
+	ax.scatter(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_winter, zorder=2, **sct_kwargs_w, label=label_str)
+	ax.plot(df_env_winter[df_env_winter['determinand.notation'] == 111].sort_values(by="Date", ascending=True)['Date'], dain_winter, zorder=1, **plt_kwargs_w)
+	ax.set_title(label=str(plot_title), fontsize=18)
+	ax.set_xlabel("time")
+	if ylabel != None:
+		ax.set_ylabel(str(ylabel))
+	if label_str != None:
+		ax.legend(fontsize=18)
 			
 	return(ax)
 
