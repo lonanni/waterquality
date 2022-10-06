@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-def loc_subset(df, location, location_type="label"):
 
+def loc_subset(df, place, location_type="label"):
 	"""
 	Return a subsample of the main dataset, according to the location of interest
 
@@ -19,20 +19,41 @@ def loc_subset(df, location, location_type="label"):
 	Performs **no** checks of the input.
 
 	"""
-	
-	if location_type == "label":
-    
-		locations = set(df['sample.samplingPoint.label'])
-		location_condition = [x for x in locations if location.lower() in x.lower()]
-		df_subset = df.loc[df['sample.samplingPoint.label'].isin(location_condition)].copy()
 
+	if location_type == "label":
+
+		locations = set(df['sample.samplingPoint.label'])
+        
+		if np.size(place)>1:
+			location_condition = [x for x in locations if place[0] in x.lower()]
+			df_subset = df.loc[df['sample.samplingPoint.label'].isin(location_condition)].copy()
+			for place_ in place[1:]:
+				location_condition = [x for x in locations if place_ in x.lower()]
+				df_subset_0 = df.loc[df['sample.samplingPoint.label'].isin(location_condition)].copy()
+
+				df_subset = pd.concat([df_subset, df_subset_0])
+                
+		else:     
+
+			location_condition = [x for x in locations if place.lower() in x.lower()]
+			df_subset = df.loc[df['sample.samplingPoint.label'].isin(location_condition)].copy()
 	if location_type == "notation":
-    
+   
 		locations_notations = set(df['sample.samplingPoint.notation'])
-		location_condition = [x for x in locations_notations if location.lower() in x.lower()]
-		df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)].copy()	
-	
+        
+		if np.size(place)>1:
+			location_condition = [x for x in locations_notations if place[0] in x.lower()]
+			df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)].copy()
+			for place_ in place[1:]:
+				location_condition = [x for x in locations_notations if place_.lower() in x.lower()]
+				df_subset_0 = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)].copy()
+				df_subset = pd.concat([df_subset, df_subset_0])
+		else:     
+			location_condition = [x for x in locations_notations if place.lower() in x.lower()]
+			df_subset = df.loc[df['sample.samplingPoint.notation'].isin(location_condition)].copy()
+
 	return df_subset
+
 	
 	
 def nutrient_time(df, location, nutrient_determinand, location_type="label", seasons=False):
