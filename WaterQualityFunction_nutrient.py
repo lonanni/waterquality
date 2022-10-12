@@ -107,10 +107,10 @@ def nutrient_time_seasons(df, location, nutrient_determinand, location_type="lab
 	"""
 	
 
-	df_env_summer = wqfn.loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
+	df_env_summer = loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
 	df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
 
-	df_env_winter = wqfn.loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
+	df_env_winter = loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
 	df_env_winter.loc[:,"Date"] = pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
     
     
@@ -136,7 +136,7 @@ def nutrient_time_seasons(df, location, nutrient_determinand, location_type="lab
 		nutrients_summer = df_env_summer[df_env_summer['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result']
 		time_winter = df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['Date']
 		nutrients_winter = df_env_winter[df_env_winter['determinand.notation'] ==nutrient_determinand].sort_values(by="Date", ascending=True)['result']
-		return(df_env_summer, nutrients_summer, time_winter, nutrients_winter)
+	return(time_summer, nutrients_summer, time_winter, nutrients_winter)
 
 		
 
@@ -146,15 +146,10 @@ def DAIN_time(df, location, location_type="label"):
 	df_env =  loc_subset(df,  location, location_type)
 	df_env.loc[:,"Date"] = pd.to_datetime(df_env['sample.sampleDateTime']).dt.date
 	
-	dain_ = []
-	date_ = []
-	for date in np.unique(df_env["Date"].iloc[0::]):
-		for N in [116, 9686, 4925, 114, 9943]:
-			for A in [9993, 111, 119]:
-				if (df_env[(df_env["Date"] == date)&(df_env['determinand.notation'] == A) ]["Date"].size>0) &(df_env[(df_env["Date"] == date)&(df_env['determinand.notation'] == N) ]["Date"].size>0):
-
-					dain_.append(df_env[(df_env["Date"] == date)&(df_env['determinand.notation'] == A) ]["result"].values[0]+df_env[(df_env["Date"] == date)&(df_env['determinand.notation'] == N) ]["result"].values[0])
-					date_.append(date)
+	df_NA = df_env[(df_env["determinand.notation"]==116)|(df_env["determinand.notation"]==9943)|(df_env["determinand.notation"]==111)|(df_env["determinand.notation"]==119)]
+	dain = df_NA.groupby("Date")["result"].sum().reset_index()
+	date_ = dain["Date"]
+	dain_ = dain["result"]	
 				
 	return(dain_, date_)
 		
@@ -162,28 +157,17 @@ def DAIN_time_seasons(df, location, location_type="label"):
 	df_env_summer =  loc_subset(df.loc[(df["month"]>4)&(df["month"]<9)], location, location_type)
 	df_env_summer.loc[:,"Date"] = pd.to_datetime(df_env_summer['sample.sampleDateTime']).dt.date
 
+	df_NA_summer = df_env_summer[(df_env_summer["determinand.notation"]==116)|(df_env_summer["determinand.notation"]==9943)|(df_env_summer["determinand.notation"]==111)|(df_env_summer["determinand.notation"]==119)]
+	dain_summer = df_NA_summer.groupby("Date")["result"].sum().reset_index()
+	date_summer = dain_summer["Date"]
+	dain_summer = dain_summer["result"]
+	
+	
 	df_env_winter =  loc_subset(df.loc[np.logical_or(df["month"]<4,df["month"]>9)], location, location_type)
 	df_env_winter.loc[:,"Date"] = pd.to_datetime(df_env_winter['sample.sampleDateTime']).dt.date
 		
-	dain_summer = []
-	date_summer = []
-	for date in np.unique(df_env_summer["Date"].iloc[0::]):
-		for N in [116, 9686, 4925, 114, 9943]:
-			for A in [9993, 111, 119]:
-				if (df_env_summer[(df_env_summer["Date"] == date)&(df_env_summer['determinand.notation'] == A) ]["Date"].size>0) &(df_env_summer[(df_env_summer["Date"] == date)&(df_env_summer['determinand.notation'] == N) ]["Date"].size>0):
-
-					dain_summer.append(df_env_summer[(df_env_summer["Date"] == date)&(df_env_summer['determinand.notation'] == A) ]["result"].values[0]+df_env_summer[(df_env_summer["Date"] == date)&(df_env_summer['determinand.notation'] == N) ]["result"].values[0])
-					date_summer.append(date)
-
-		dain_winter = []
-		date_winter = []
-		for date in np.unique(df_env_winter["Date"].iloc[0::]):
-			for N in [116, 9686, 4925, 114, 9943]:
-				for A in [9993, 111, 119]:
-					if (df_env_winter[(df_env_winter["Date"] == date)&(df_env_winter['determinand.notation'] == A) ]["Date"].size>0) &(df_env_winter[(df_env_winter["Date"] == date)&(df_env_winter['determinand.notation'] == N) ]["Date"].size>0):
-
-
-						dain_winter.append(df_env_winter[(df_env_winter["Date"] == date)&(df_env_winter['determinand.notation'] == A) ]["result"].values[0]+df_env_winter[(df_env_winter["Date"] == date)&(df_env_winter['determinand.notation'] == N) ]["result"].values[0])
-						date_winter.append(date)
-
+	df_NA_winter = df_env_winter[(df_env_winter["determinand.notation"]==116)|(df_env_winter["determinand.notation"]==9943)|(df_env_winter["determinand.notation"]==111)|(df_env_winter["determinand.notation"]==119)]
+	dain_winter = df_NA_winter.groupby("Date")["result"].sum().reset_index()
+	date_winter = dain_winter["Date"]
+	dain_winter = dain_winter["result"]
 	return(date_summer, dain_summer, date_winter, dain_winter)
